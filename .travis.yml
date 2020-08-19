@@ -23,7 +23,7 @@ jobs:
             - npm run test
 
         - stage: publish
-        #   if: branch = master
+          if: branch = master
           services:
             - docker
           script:
