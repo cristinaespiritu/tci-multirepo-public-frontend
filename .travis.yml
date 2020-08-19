@@ -9,14 +9,25 @@ jobs:
           script:
             - npm ci
 
-script:
-  - npm run build --if-present
-    # - npm install eslint
-    # - npm run lint
-  - npm run test
+        - stage: build
+          script:
+            - npm run build --if-present
+    
+        - stage: lint
+          script:
+            # - npm install eslint
+            # - npm run lint
+        
+        - stage: unit test
+          script:
+            - npm run test
 
-
-
-
-
-
+        - stage: publish
+        #   if: branch = master
+          services:
+            - docker
+          script:
+            - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            - docker build -t tci-multirepo-public-backend .
+            - docker tag tci-multirepo-public-backend $REPO:travis-$TRAVIS_BUILD_NUMBER
+            - docker push $REPO
